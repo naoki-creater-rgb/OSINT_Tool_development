@@ -12,15 +12,10 @@ class UrlScanIoUrlModel(BaseModel):
 class UrlScanPageMetaData(BaseModel):
     url: Optional[str] = None #調査したURL
     title: Optional[str] = None #ページタイトル
+    domain: Optional[str] = None #調査ドメイン名（後続のWhoIs/VirusTotalの鍵）
+    apexDomain: Optional[str] = None #登録ドメイン（サブドメインを除いたapex。WhoIs向き）
     ip: Optional[str] = None #調査ドメインのIPアドレス
     country: Optional[str] = None #ドメインが所属する国コード
-
-# ---スキャン判定 ---
-class UrlScanVerdictOverall(BaseModel):
-    malicious: Optional[bool] = None #悪性判定
-
-class UrlScanVerdict(BaseModel):
-    overall: Optional[UrlScanVerdictOverall] = None
 
 # ---ネットワーク通信履歴 ---
 # 実データの階層: data.requests[i].request.request.url (request が二重ネスト)
@@ -42,5 +37,4 @@ class UrlScanDataContainer(BaseModel):
 #     404/200 の判定は本文の status ではなく HTTP ステータスコードで行う。
 class UrlScanResponseRoot(BaseModel):
     page: UrlScanPageMetaData
-    verdicts: UrlScanVerdict
     data: UrlScanDataContainer

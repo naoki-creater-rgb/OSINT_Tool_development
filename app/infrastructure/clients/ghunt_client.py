@@ -30,7 +30,7 @@ GHUNT_MASTER_TOKEN = os.getenv("GHUNT_MASTER_TOKEN")
 CONTAINER = "PROFILE"
 
 
-async def ensure_creds(as_client) -> GHuntCreds:
+async def _ensure_creds(as_client) -> GHuntCreds:
     """認証済み GHuntCreds を用意する（対話的な `ghunt login` は不要）。
 
     - 有効な creds.m が既にあればそれをロード＋検証して返す。
@@ -77,7 +77,7 @@ async def ghunt_response(target_email: str) -> GHuntResponse | None:
 
     try:
         # 1. 認証情報の用意＋認証（creds.m が無ければ master token から自動生成）
-        creds = await ensure_creds(as_client)
+        creds = await _ensure_creds(as_client)
 
         # 2. プロフィール本体を取得（これが調査の中核）
         people_pa = PeoplePaHttp(creds)
@@ -145,7 +145,7 @@ async def ghunt_response(target_email: str) -> GHuntResponse | None:
     finally:
         await as_client.aclose()
         
-def to_playwright_cookies(cookie_dict: dict) -> list[dict]:
+def _to_playwright_cookies(cookie_dict: dict) -> list[dict]:
     """Googleのcookies(name->value)をPlaywrightのadd_cookies形式へ変換。
     __Host- はDomain属性禁止のため url指定(host-only)にする。"""
     out = []
@@ -165,8 +165,8 @@ async def get_ghunt_cookies() -> list[dict]:
     """GHunt認証セッションのCookieをPlaywright形式で返す（共通利用）。"""
     as_client = get_httpx_client()
     try:
-        creds = await ensure_creds(as_client)
-        return to_playwright_cookies(creds.cookies)
+        creds = await _ensure_creds(as_client)
+        return _to_playwright_cookies(creds.cookies)
     finally:
         await as_client.aclose()
 

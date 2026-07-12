@@ -3,7 +3,7 @@ import httpx
 import os
 from dotenv import load_dotenv
 
-from app.infrastructure.request_models.virustotal_client import (
+from app.infrastructure.request_models.virustotal_model import (
     VirusTotalResponse,
     VirusTotalFirstResponse,
     VirusTotalAnalysisResponse,
