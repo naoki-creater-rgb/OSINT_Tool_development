@@ -7,7 +7,11 @@ pydantic>=2.6.0
 networkx>=3.2.1
 
 # Asynchronous HTTP Client
-httpx>=0.27.0
+# ghunt が httpx<0.28 を要求するため上限を固定（ddgs は実通信に primp を使うので 0.27 系で動作する）
+httpx>=0.27.0,<0.28.0
+
+# Search (googlesearch_client): DuckDuckGo。APIキー不要
+ddgs>=9.0.0
 
 # Configuration
 python-dotenv>=1.0.1

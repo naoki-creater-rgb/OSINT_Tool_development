@@ -1,15 +1,24 @@
 from playwright.sync_api import sync_playwright
+from typing import List
 
-def get_html_with_playwright(url: str):
+_DEFAULT_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36")
+
+def get_html_with_playwright(url: str, cookies: List[dict] | None = None):
     # 1. Playwrightの起動
     with sync_playwright() as p:
         # ブラウザを起動（headless=True で画面非表示）
         browser = p.chromium.launch(headless=True)
+        context = browser.new_context(user_agent=_DEFAULT_UA, locale="en-US")
+        if cookies:
+            context.add_cookies(cookies)
+        
         page = browser.new_page()
         
         # 2. リクエストの送信
         print("Playwright: リクエストを送信中...")
-        page.goto(url)
+        page.goto(url, wait_until="domcontentloaded")
+        #ページを待機
+        page.wait_for_timeout(6000)
         
         # 3. レスポンスの受け取り
         # ブラウザ上にレンダリングされた最終的なHTMLを「文字列」として取得
@@ -17,11 +26,6 @@ def get_html_with_playwright(url: str):
         
         # ブラウザを閉じる
         browser.close()
-        
-        # 受け取ったレスポンス（形式：str）を確認
-        print(f"受け取ったデータ型: {type(html_response)}")
-        print("--- レスポンス（冒頭500文字） ---")
-        print(html_response[:500])
         
         return html_response
 
